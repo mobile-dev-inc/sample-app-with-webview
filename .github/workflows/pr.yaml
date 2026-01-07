@@ -1,11 +1,14 @@
-name: Build & Store Artifact
+name: CI Workflow
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   pull_request:
 
 jobs:
   build:
+    name: Build & Store Artifact
     runs-on: macos-latest
 
     steps:
@@ -31,3 +34,34 @@ jobs:
           path: ./build/Build/Products/Release-iphonesimulator*/SimpleWebViewApp.app # Include wildcard to preserve path
           retention-days: 5
           compression-level: 0 # no compression for binary files
+          if-no-files-found: error
+
+  publish:
+    name: Publish to GCS
+    needs: build
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: SimpleWebViewApp
+
+      - name: List files
+        run: ls -la SimpleWebViewApp
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          # These credentials should only have write access to the bucket
+          credentials_json: ${{ secrets.GCP_MOBILEDEV_BUCKET_CREDENTIALS }}
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: ">= 484.0.0"
+          project_id: perf-dev-289002
+
+      - name: Upload apps to public Google Cloud Storage bucket
+        run: ./upload_to_gcs
