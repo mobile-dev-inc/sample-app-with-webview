@@ -1,0 +1,33 @@
+name: Build & Store Artifact
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check Xcode version
+        run: xcodebuild -version
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Do build
+        run: |
+          xcodebuild \
+            -scheme SimpleWebViewApp \
+            -project ./SimpleWebViewApp.xcodeproj \
+            -configuration Release \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ./build
+
+      - name: Store output
+        uses: actions/upload-artifact@v6
+        with:
+          name: SimpleWebViewApp
+          path: ./build/Build/Products/Release-iphonesimulator*/SimpleWebViewApp.app # Include wildcard to preserve path
+          retention-days: 5
+          compression-level: 0 # no compression for binary files
