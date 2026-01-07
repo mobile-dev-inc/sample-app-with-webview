@@ -49,7 +49,7 @@ jobs:
           name: SimpleWebViewApp
 
       - name: List files
-        run: ls -la SimpleWebViewApp
+        run: ls -la 
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
