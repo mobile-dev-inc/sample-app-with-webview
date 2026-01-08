@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: SimpleWebViewApp
-          path: ./build/Build/Products/Release-iphonesimulator*/SimpleWebViewApp.app # Include wildcard to preserve path
+          path: build/Build/Products/Release-iphonesimulator/*SimpleWebViewApp.app # Include wildcard to preserve path
           retention-days: 5
           compression-level: 0 # no compression for binary files
           if-no-files-found: error
