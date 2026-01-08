@@ -4,11 +4,7 @@ set -eu
 # Upload iOS app
 UPLOAD_PATH="gs://mobile.dev/cli_e2e"
 
-cd /build/Build/Products/Release-iphonesimulator
-
 zip -r -q SimpleWebViewApp.zip SimpleWebViewApp.app
 
-cd -
-
-gsutil cp /build/Build/Products/Release-iphonesimulator/SimpleWebViewApp.zip "$UPLOAD_PATH/SimpleWebViewApp.zip"
+gsutil cp SimpleWebViewApp.zip "$UPLOAD_PATH/SimpleWebViewApp.zip"
 gsutil acl ch -r -u AllUsers:R "$UPLOAD_PATH/SimpleWebViewApp.zip"
